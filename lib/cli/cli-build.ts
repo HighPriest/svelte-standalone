@@ -4,7 +4,7 @@ import { glob } from 'glob';
 import { buildStandalone } from './methods/index.js';
 import path from 'path';
 
-const rootDir = process.cwd();
+const rootDir = process.cwd().replaceAll(path.sep, path.posix.sep);;
 
 const c = glob
 	.sync(`${rootDir}/src/_standalone/**/embed.{js,ts}`) // Matches both .js and .ts
