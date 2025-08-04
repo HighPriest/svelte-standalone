@@ -26,6 +26,15 @@ program
 	.option(
 		'--strip-runtime',
 		'Exclude "runtime" styles sharing and bundle shared styles directly into the selected components'
+	.option(
+		'-s, --source <rel_dir>',
+		'Change default source directory, to a different directory, relative to project root',
+		"src/_standalone" // Default Value
+	)
+	.option(
+		'-t, --target <rel_dir>',
+		'Change default output directory, to a different directory, relative to project root',
+		"static/dist" // Default Value
 	)
 	.option('-m, --mode <mode>', 'Set the Vite mode')
 	.action((options) => {

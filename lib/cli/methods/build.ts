@@ -122,16 +122,17 @@ const prepareConfigForBuild = (
 	componentNames: string[],
 	prod: boolean,
 	hasRuntime: boolean,
+	inputDir: string,
+	outputDir: string,
 	viteConfig?: UserConfig,
 ) => {
 	return componentNames.map((file) => {
 		const rawComponentName = path.dirname(file).split(path.sep).at(-1) || '';
 		const componentName = normalizeComponentName(rawComponentName);
 		const visualizerDir = path
-			.dirname(file)
-			.replace('src', 'static')
-			.replace('_standalone', `dist${path.sep}visualizer`);
-		const purgeDir = path.dirname(file).replace('embed.ts', '');
+				.dirname(file)
+				.replace(inputDir, path.join(outputDir,"visualizer"))
+		const purgeDir = path.dirname(file); // This was here before. Shouldn't be necessary `.replace('embed.ts', '')`
 
 		if (!componentName) {
 			console.error('Invalid fileName: ', file);
@@ -154,7 +155,7 @@ const prepareConfigForBuild = (
 					name: componentName,
 					fileName: componentName
 				},
-				outDir: path.resolve(rootDir, 'static/dist/standalone'),
+				outDir: path.resolve(rootDir, outputDir),
 				rollupOptions: {
 					output: {
 						chunkFileNames: 'chunks/[name].[hash].js',
@@ -198,7 +199,7 @@ export const buildStandalone = async ({
 	).then((result) => result?.config);
 
 	try {
-		const configs = prepareConfigForBuild(componentsPaths, prod, hasRuntime, viteConfig);
+		const configs = prepareConfigForBuild(componentsPaths, prod, hasRuntime, inputDir, outputDir, viteConfig);
 		await Promise.all(configs.map((c) => build({ ...c, configFile: false, mode })));
 	} catch (handleBuildError) {
 		console.error('Error during handleBuild:', handleBuildError);
