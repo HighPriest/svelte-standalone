@@ -9,6 +9,6 @@ const p = findUpSync('package.json');
 
 const root = p ? path.dirname(p) : null;
 
-export const rootDir = root ?? process.cwd().replaceAll(path.sep, path.posix.sep);;
+export const rootDir = root ?? process.cwd().replaceAll(path.sep, path.posix.sep);
 export const distDir = __dirname;
 export const moduleDir = __dirname.replace(path.sep + 'dist', '');
