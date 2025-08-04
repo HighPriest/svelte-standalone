@@ -166,7 +166,9 @@ const prepareConfigForBuild = (
 						entryFileNames: `${componentName}.min.js`
 					},
 					plugins: [resolve({ browser: true, dedupe: ['svelte'] }), ...getProdConfig(prod)]
-				}
+				},
+				cssCodeSplit: false // This is explicitly set with default value. 
+									// We are handling style injection with a injectCSS plugin anyway.
 			},
 			resolve: {
 				alias: {
