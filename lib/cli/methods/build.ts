@@ -143,12 +143,11 @@ const prepareConfigForBuild = (
 		}
 
 		return defineConfig({
-			css: {
+			css: prod ? { // Wipe unused css in production builds
 				postcss: {
 					plugins: getPostCSSPlugins(purgeDir, rawComponentName, hasRuntime)
 				}
-			},
-			plugins: commonPlugins(componentName, visualizerDir),
+			} : undefined,
 			plugins: commonPlugins(componentName, injectAssets, visualizerDir),
 			build: {
 				minify: prod,
