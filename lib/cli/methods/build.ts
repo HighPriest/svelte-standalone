@@ -102,7 +102,7 @@ const getProdConfig = (prod: boolean) => {
 		: [];
 }
 
-const commonPlugins = (componentName: string, visualizerDir: string) =>
+const commonPlugins = (componentName: string, visualizerDir?: string) =>
 	[
 		svelte({
 			configFile: svelteConfig,
@@ -110,10 +110,12 @@ const commonPlugins = (componentName: string, visualizerDir: string) =>
 				cssHash: ({ name }) => `s-${name?.toLowerCase()}`
 			}
 		}),
-		visualizer({
-			filename: `${visualizerDir}.status.html`,
-			title: `${componentName} status`
-		}),
+		visualizerDir ?  // If visualizerDir is not set. Disable it!
+			visualizer({
+				filename: `${visualizerDir}.status.html`,
+				title: `${componentName} status`
+			}) 
+			: undefined,
 		libInjectCss(),
 		tailwind && tailwindcss()
 	] as PluginOption[];
@@ -129,9 +131,11 @@ const prepareConfigForBuild = (
 	return componentNames.map((file) => {
 		const rawComponentName = path.dirname(file).split(path.sep).at(-1) || '';
 		const componentName = normalizeComponentName(rawComponentName);
-		const visualizerDir = path
+		const visualizerDir = prod ? // If we are in production. Don't output the visualizer
+			path
 				.dirname(file)
 				.replace(inputDir, path.join(outputDir,"visualizer"))
+			: undefined;
 		const purgeDir = path.dirname(file); // This was here before. Shouldn't be necessary `.replace('embed.ts', '')`
 
 		if (!componentName) {
