@@ -107,7 +107,7 @@ const commonPlugins = (componentName: string, injectAssets: boolean, visualizerD
 		svelte({
 			configFile: svelteConfig,
 			compilerOptions: {
-				cssHash: ({ name }) => `s-${name?.toLowerCase()}`
+				cssHash: ({ name }) => `s-${componentName.toLowerCase()}-${name?.toLowerCase()}`
 			}
 		}),
 		visualizerDir // If visualizerDir is not set. Disable it!
