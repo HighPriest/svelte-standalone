@@ -197,7 +197,7 @@ export const buildStandalone = async ({
 	outputDir: string
 }) => {
 	const viteConfig = await loadConfigFromFile(
-		{ command: 'build', mode: mode ?? 'production' },
+		{ command: 'build', mode },
 		getPath('vite.config'),
 		rootDir
 	).then((result) => result?.config);
