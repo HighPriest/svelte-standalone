@@ -47,8 +47,8 @@ const normalizeComponentName = (componentName: string) => componentName.replace(
 const isRuntime = (componentName: string) =>
 	componentName === 'runtime' || componentName === '$runtime' || componentName === '+runtime';
 
-const getContent = (purgeDir: string, componentName: string, hasRuntime: boolean) => {
-	const content = [path.resolve(rootDir, `${purgeDir}/**/*.{svelte,ts,js,css}`)];
+const getContent = (sourceDir: string, componentName: string, hasRuntime: boolean) => {
+	const content = [path.resolve(rootDir, `${sourceDir}/**/*.{svelte,ts,js,css}`)];
 
 	if (!hasRuntime || isRuntime(componentName)) {
 		content.push(path.resolve(rootDir, './src/shared/**/*.{svelte,ts,js,css}'));
@@ -81,9 +81,9 @@ const getPostCSSPlugins = (purgeDir: string, componentName: string, hasRuntime: 
 			];
 };
 
-const getProd = (prod: boolean) =>
-	prod
-		? [
+const getProdConfig = (prod: boolean) => {
+	return prod ?
+		[
 				strip({
 					functions: ['console.log', 'console.warn', 'console.error', 'assert.*']
 				}),
@@ -100,6 +100,7 @@ const getProd = (prod: boolean) =>
 				})
 			]
 		: [];
+}
 
 const commonPlugins = (componentName: string, visualizerDir: string) =>
 	[
@@ -117,13 +118,13 @@ const commonPlugins = (componentName: string, visualizerDir: string) =>
 		tailwind && tailwindcss()
 	] as PluginOption[];
 
-const handleBuild = (
-	files: string[],
+const prepareConfigForBuild = (
+	componentNames: string[],
 	prod: boolean,
 	hasRuntime: boolean,
-	viteConfig?: UserConfig
+	viteConfig?: UserConfig,
 ) => {
-	return files.map((file) => {
+	return componentNames.map((file) => {
 		const rawComponentName = path.dirname(file).split(path.sep).at(-1) || '';
 		const componentName = normalizeComponentName(rawComponentName);
 		const visualizerDir = path
@@ -160,7 +161,7 @@ const handleBuild = (
 						assetFileNames: 'assets/[name][extname]',
 						entryFileNames: `${componentName}.min.js`
 					},
-					plugins: [resolve({ browser: true, dedupe: ['svelte'] }), ...getProd(prod)]
+					plugins: [resolve({ browser: true, dedupe: ['svelte'] }), ...getProdConfig(prod)]
 				}
 			},
 			resolve: {
@@ -177,12 +178,19 @@ const handleBuild = (
 	});
 };
 
-export const buildStandalone = async (
-	files: string[],
+export const buildStandalone = async ({
+	componentsPaths,
+	prod,hasRuntime,mode,
+	inputDir,
+	outputDir
+	}:{
+	componentsPaths: string[],
 	prod: boolean,
 	hasRuntime: boolean,
-	mode?: string
-) => {
+	mode: string,
+	inputDir: string,
+	outputDir: string
+}) => {
 	const viteConfig = await loadConfigFromFile(
 		{ command: 'build', mode: mode ?? 'production' },
 		getPath('vite.config'),
@@ -190,7 +198,7 @@ export const buildStandalone = async (
 	).then((result) => result?.config);
 
 	try {
-		const configs = handleBuild(files, prod, hasRuntime, viteConfig);
+		const configs = prepareConfigForBuild(componentsPaths, prod, hasRuntime, viteConfig);
 		await Promise.all(configs.map((c) => build({ ...c, configFile: false, mode })));
 	} catch (handleBuildError) {
 		console.error('Error during handleBuild:', handleBuildError);

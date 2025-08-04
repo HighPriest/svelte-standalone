@@ -28,11 +28,11 @@ program
 		'Exclude "runtime" styles sharing and bundle shared styles directly into the selected components'
 	)
 	.option('-m, --mode <mode>', 'Set the Vite mode')
-	.action((cmd) => {
-		if (cmd.stripRuntime) {
+	.action((options) => {
+		if (options.stripRuntime) {
 			console.log('Including shared styles in all components');
 		}
-		build(cmd.production, cmd.all, cmd.stripRuntime, cmd.mode);
+		build({...options});
 	});
 
 if (process.argv.length < 3) {
