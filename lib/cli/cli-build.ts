@@ -56,6 +56,7 @@ export async function build({
 		buildStandalone({
 			componentsPaths: c.map((co) => co.value),
 			prod,
+			injectAssets,
 			hasRuntime,
 			mode,
 			inputDir,

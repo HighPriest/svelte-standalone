@@ -102,7 +102,7 @@ const getProdConfig = (prod: boolean) => {
 		: [];
 };
 
-const commonPlugins = (componentName: string, visualizerDir?: string) =>
+const commonPlugins = (componentName: string, injectAssets: boolean, visualizerDir?: string) =>
 	[
 		svelte({
 			configFile: svelteConfig,
@@ -116,13 +116,14 @@ const commonPlugins = (componentName: string, visualizerDir?: string) =>
 					title: `${componentName} status`
 				})
 			: undefined,
-		libInjectCss(),
+		injectAssets ? libInjectCss() : undefined,
 		tailwind && tailwindcss()
 	] as PluginOption[];
 
 const prepareConfigForBuild = (
 	componentNames: string[],
 	prod: boolean,
+	injectAssets: boolean,
 	hasRuntime: boolean,
 	inputDir: string,
 	outputDir: string,
@@ -148,6 +149,7 @@ const prepareConfigForBuild = (
 				}
 			},
 			plugins: commonPlugins(componentName, visualizerDir),
+			plugins: commonPlugins(componentName, injectAssets, visualizerDir),
 			build: {
 				minify: prod,
 				emptyOutDir: false,
