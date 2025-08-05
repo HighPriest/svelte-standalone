@@ -143,11 +143,14 @@ const prepareConfigForBuild = (
 		}
 
 		return defineConfig({
-			css: prod ? { // Wipe unused css in production builds
-				postcss: {
-					plugins: getPostCSSPlugins(purgeDir, rawComponentName, hasRuntime)
-				}
-			} : undefined,
+			css: prod
+				? {
+						// Wipe unused css in production builds
+						postcss: {
+							plugins: getPostCSSPlugins(purgeDir, rawComponentName, hasRuntime)
+						}
+					}
+				: undefined,
 			plugins: commonPlugins(componentName, injectAssets, visualizerDir),
 			build: {
 				minify: prod,
@@ -167,8 +170,8 @@ const prepareConfigForBuild = (
 					},
 					plugins: [resolve({ browser: true, dedupe: ['svelte'] }), ...getProdConfig(prod)]
 				},
-				cssCodeSplit: false // This is explicitly set with default value. 
-									// We are handling style injection with a injectCSS plugin anyway.
+				cssCodeSplit: false // This is explicitly set with default value.
+				// We are handling style injection with a injectCSS plugin anyway.
 			},
 			resolve: {
 				alias: {
@@ -187,6 +190,7 @@ const prepareConfigForBuild = (
 export const buildStandalone = async ({
 	componentsPaths,
 	prod,
+	injectAssets,
 	hasRuntime,
 	mode,
 	inputDir,
@@ -194,6 +198,7 @@ export const buildStandalone = async ({
 }: {
 	componentsPaths: string[];
 	prod: boolean;
+	injectAssets: boolean;
 	hasRuntime: boolean;
 	mode: string;
 	inputDir: string;
@@ -210,6 +215,7 @@ export const buildStandalone = async ({
 			componentsPaths,
 			prod,
 			hasRuntime,
+			injectAssets,
 			inputDir,
 			outputDir,
 			viteConfig

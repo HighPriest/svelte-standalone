@@ -23,7 +23,11 @@ program
 	.description('Build your standalone components')
 	.option('-p, --production', 'Build for production', false) // Default Value
 	.option('-a, --all', 'Build all Standalone components', false) // Default Value
-	.option('-i, --injectAssets', 'Combine, minimise and inject all the styles and assets into one JS file', undefined)
+	.option(
+		'-i, --injectAssets',
+		'Combine, minimise and inject all the styles and assets into one JS file',
+		undefined
+	)
 	.option('--no-injectAssets', 'Spread all assets over separate, importable files')
 	.option(
 		'--strip-runtime',
@@ -47,10 +51,10 @@ program
 		}
 		options.injectAssets === undefined
 			? options.prod
-				? options.injectAssets = true 	// inject when in prod
-				: options.injectAssets = false 	// don't inject when in dev
-			: null						// respect users setting, when value is set
-		build({...options});
+				? (options.injectAssets = true) // inject when in prod
+				: (options.injectAssets = false) // don't inject when in dev
+			: null; // respect users setting, when value is set
+		build({ ...options });
 	});
 
 if (process.argv.length < 3) {

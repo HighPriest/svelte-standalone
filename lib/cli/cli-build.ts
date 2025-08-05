@@ -28,6 +28,7 @@ export const buildStrategy = {
 export async function build({
 	production: prod,
 	all,
+	injectAssets,
 	stripRuntime,
 	mode,
 	source: inputDir,
@@ -35,6 +36,7 @@ export async function build({
 }: {
 	production: boolean;
 	all: boolean;
+	injectAssets: boolean;
 	stripRuntime: boolean;
 	mode: string;
 	source: string;
@@ -69,7 +71,7 @@ export async function build({
 	const componentsPaths: string[] = await checkbox(buildStrategy);
 
 	try {
-		buildStandalone({ componentsPaths, prod, hasRuntime, mode, inputDir, outputDir });
+		buildStandalone({ componentsPaths, prod, injectAssets, hasRuntime, mode, inputDir, outputDir });
 	} catch (error) {
 		if (error instanceof Error && error.name === 'ExitPromptError') {
 			// noop; silence this error
