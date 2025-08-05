@@ -26,9 +26,19 @@ export const buildStrategy = {
 } as const;
 
 export async function build({
-	production: prod, all, stripRuntime, mode, source: inputDir, target: outputDir
-}:{
-	production: boolean, all: boolean, stripRuntime: boolean, mode: string, source: string, target: string
+	production: prod,
+	all,
+	stripRuntime,
+	mode,
+	source: inputDir,
+	target: outputDir
+}: {
+	production: boolean;
+	all: boolean;
+	stripRuntime: boolean;
+	mode: string;
+	source: string;
+	target: string;
 }) {
 	if (buildStrategy.choices.length === 0) {
 		console.warn(
@@ -58,7 +68,7 @@ export async function build({
 	const componentsPaths: string[] = await checkbox(buildStrategy);
 
 	try {
-		buildStandalone({componentsPaths, prod, hasRuntime, mode, inputDir, outputDir});
+		buildStandalone({ componentsPaths, prod, hasRuntime, mode, inputDir, outputDir });
 	} catch (error) {
 		if (error instanceof Error && error.name === 'ExitPromptError') {
 			// noop; silence this error

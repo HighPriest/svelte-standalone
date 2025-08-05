@@ -26,24 +26,24 @@ program
 	.option(
 		'--strip-runtime',
 		'Exclude "runtime" styles sharing and bundle shared styles directly into the selected components',
-		false	// Default Value
+		false // Default Value
 	)
 	.option('-m, --mode <mode>', 'Override the Vite mode (production || development)')
 	.option(
 		'-s, --source <rel_dir>',
 		'Change default source directory, to a different directory, relative to project root',
-		"src/_standalone" // Default Value
+		'src/_standalone' // Default Value
 	)
 	.option(
 		'-t, --target <rel_dir>',
 		'Change default output directory, to a different directory, relative to project root',
-		"static/dist" // Default Value
+		'static/dist' // Default Value
 	)
 	.action((options) => {
 		if (options.stripRuntime) {
 			console.log('Including shared styles in all components');
 		}
-		build({...options});
+		build({ ...options });
 	});
 
 if (process.argv.length < 3) {

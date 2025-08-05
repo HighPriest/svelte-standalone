@@ -82,8 +82,8 @@ const getPostCSSPlugins = (purgeDir: string, componentName: string, hasRuntime: 
 };
 
 const getProdConfig = (prod: boolean) => {
-	return prod ?
-		[
+	return prod
+		? [
 				strip({
 					functions: ['console.log', 'console.warn', 'console.error', 'assert.*']
 				}),
@@ -100,7 +100,7 @@ const getProdConfig = (prod: boolean) => {
 				})
 			]
 		: [];
-}
+};
 
 const commonPlugins = (componentName: string, visualizerDir?: string) =>
 	[
@@ -110,11 +110,11 @@ const commonPlugins = (componentName: string, visualizerDir?: string) =>
 				cssHash: ({ name }) => `s-${name?.toLowerCase()}`
 			}
 		}),
-		visualizerDir ?  // If visualizerDir is not set. Disable it!
-			visualizer({
-				filename: `${visualizerDir}.status.html`,
-				title: `${componentName} status`
-			}) 
+		visualizerDir // If visualizerDir is not set. Disable it!
+			? visualizer({
+					filename: `${visualizerDir}.status.html`,
+					title: `${componentName} status`
+				})
 			: undefined,
 		libInjectCss(),
 		tailwind && tailwindcss()
@@ -126,15 +126,13 @@ const prepareConfigForBuild = (
 	hasRuntime: boolean,
 	inputDir: string,
 	outputDir: string,
-	viteConfig?: UserConfig,
+	viteConfig?: UserConfig
 ) => {
 	return componentNames.map((file) => {
 		const rawComponentName = path.dirname(file).split(path.sep).at(-1) || '';
 		const componentName = normalizeComponentName(rawComponentName);
-		const visualizerDir = prod ? // If we are in production. Don't output the visualizer
-			path
-				.dirname(file)
-				.replace(inputDir, path.join(outputDir,"visualizer"))
+		const visualizerDir = prod // If we are in production. Don't output the visualizer
+			? path.dirname(file).replace(inputDir, path.join(outputDir, 'visualizer'))
 			: undefined;
 		const purgeDir = path.dirname(file); // This was here before. Shouldn't be necessary `.replace('embed.ts', '')`
 
@@ -185,16 +183,18 @@ const prepareConfigForBuild = (
 
 export const buildStandalone = async ({
 	componentsPaths,
-	prod,hasRuntime,mode,
+	prod,
+	hasRuntime,
+	mode,
 	inputDir,
 	outputDir
-	}:{
-	componentsPaths: string[],
-	prod: boolean,
-	hasRuntime: boolean,
-	mode: string,
-	inputDir: string,
-	outputDir: string
+}: {
+	componentsPaths: string[];
+	prod: boolean;
+	hasRuntime: boolean;
+	mode: string;
+	inputDir: string;
+	outputDir: string;
 }) => {
 	const viteConfig = await loadConfigFromFile(
 		{ command: 'build', mode },
@@ -203,7 +203,14 @@ export const buildStandalone = async ({
 	).then((result) => result?.config);
 
 	try {
-		const configs = prepareConfigForBuild(componentsPaths, prod, hasRuntime, inputDir, outputDir, viteConfig);
+		const configs = prepareConfigForBuild(
+			componentsPaths,
+			prod,
+			hasRuntime,
+			inputDir,
+			outputDir,
+			viteConfig
+		);
 		await Promise.all(configs.map((c) => build({ ...c, configFile: false, mode })));
 	} catch (handleBuildError) {
 		console.error('Error during handleBuild:', handleBuildError);
